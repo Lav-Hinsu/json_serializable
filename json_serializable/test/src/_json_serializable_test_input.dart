@@ -7,12 +7,11 @@
 import 'dart:collection';
 
 import 'package:json_annotation/json_annotation.dart';
-
-import 'annotation.dart';
+import 'package:source_gen_test/annotations.dart';
 
 part 'checked_test_input.dart';
-part 'core_subclass_type_input.dart';
 part 'configuration_input.dart';
+part 'core_subclass_type_input.dart';
 part 'default_value_input.dart';
 part 'field_namer_input.dart';
 part 'generic_test_input.dart';
@@ -22,18 +21,18 @@ part 'setter_test_input.dart';
 part 'to_from_json_test_input.dart';
 
 @ShouldThrow('Generator cannot target `theAnswer`.',
-    'Remove the JsonSerializable annotation from `theAnswer`.')
+    todo: 'Remove the JsonSerializable annotation from `theAnswer`.')
 @JsonSerializable()
 const theAnswer = 42;
 
 @ShouldThrow('Generator cannot target `annotatedMethod`.',
-    'Remove the JsonSerializable annotation from `annotatedMethod`.')
+    todo: 'Remove the JsonSerializable annotation from `annotatedMethod`.')
 @JsonSerializable()
 void annotatedMethod() => null;
 
 @ShouldGenerate(r'''
-Person _$PersonFromJson(Map<String, dynamic> json) {
-  return Person()
+GeneralTestClass1 _$GeneralTestClass1FromJson(Map<String, dynamic> json) {
+  return GeneralTestClass1()
     ..firstName = json['firstName'] as String
     ..lastName = json['lastName'] as String
     ..height = json['h'] as int
@@ -45,7 +44,8 @@ Person _$PersonFromJson(Map<String, dynamic> json) {
     ..listOfInts = (json['listOfInts'] as List)?.map((e) => e as int)?.toList();
 }
 
-Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
+Map<String, dynamic> _$GeneralTestClass1ToJson(GeneralTestClass1 instance) =>
+    <String, dynamic>{
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'h': instance.height,
@@ -56,27 +56,29 @@ Map<String, dynamic> _$PersonToJson(Person instance) => <String, dynamic>{
     };
 ''')
 @JsonSerializable()
-class Person {
+class GeneralTestClass1 {
   String firstName, lastName;
   @JsonKey(name: 'h')
   int height;
   DateTime dateOfBirth;
   dynamic dynamicType;
+
   //ignore: prefer_typing_uninitialized_variables
   var varType;
   List<int> listOfInts;
 }
 
 @ShouldGenerate(r'''
-Order _$OrderFromJson(Map<String, dynamic> json) {
-  return Order(json['height'] as int, json['firstName'] as String,
+GeneralTestClass2 _$GeneralTestClass2FromJson(Map<String, dynamic> json) {
+  return GeneralTestClass2(json['height'] as int, json['firstName'] as String,
       json['lastName'] as String)
     ..dateOfBirth = json['dateOfBirth'] == null
         ? null
         : DateTime.parse(json['dateOfBirth'] as String);
 }
 
-Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
+Map<String, dynamic> _$GeneralTestClass2ToJson(GeneralTestClass2 instance) =>
+    <String, dynamic>{
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'height': instance.height,
@@ -84,12 +86,13 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
     };
 ''')
 @JsonSerializable()
-class Order {
+class GeneralTestClass2 {
   final String firstName, lastName;
   int height;
   DateTime dateOfBirth;
 
-  Order(this.height, String firstName, [this.lastName]) : firstName = firstName;
+  GeneralTestClass2(this.height, String firstName, [this.lastName])
+      : firstName = firstName;
 }
 
 @ShouldGenerate(r'''
@@ -103,6 +106,7 @@ Map<String, dynamic> _$FinalFieldsToJson(FinalFields instance) =>
 @JsonSerializable()
 class FinalFields {
   final int a;
+
   int get b => 4;
 
   FinalFields(this.a);
@@ -267,7 +271,7 @@ class NoCtorClass {
 }
 
 @ShouldThrow('More than one field has the JSON key `str`.',
-    'Check the `JsonKey` annotations on fields.')
+    todo: 'Check the `JsonKey` annotations on fields.')
 @JsonSerializable(createFactory: false)
 class KeyDupesField {
   @JsonKey(name: 'str')
@@ -277,7 +281,7 @@ class KeyDupesField {
 }
 
 @ShouldThrow('More than one field has the JSON key `a`.',
-    'Check the `JsonKey` annotations on fields.')
+    todo: 'Check the `JsonKey` annotations on fields.')
 @JsonSerializable(createFactory: false)
 class DupeKeys {
   @JsonKey(name: 'a')
@@ -311,6 +315,7 @@ class IgnoredFieldClass {
 class IgnoredFieldCtorClass {
   @JsonKey(ignore: true)
   int ignoredTrueField;
+
   IgnoredFieldCtorClass(this.ignoredTrueField);
 }
 
@@ -320,6 +325,7 @@ class IgnoredFieldCtorClass {
 class PrivateFieldCtorClass {
   // ignore: unused_field
   int _privateField;
+
   PrivateFieldCtorClass(this._privateField);
 }
 
@@ -332,13 +338,13 @@ class IncludeIfNullDisallowNullClass {
   int field;
 }
 
-@JsonSerializable(createFactory: false)
+@JsonSerializable(createFactory: false, explicitToJson: true)
 class TrivialNestedNullable {
   TrivialNestedNullable child;
   int otherField;
 }
 
-@JsonSerializable(createFactory: false, nullable: false)
+@JsonSerializable(createFactory: false, nullable: false, explicitToJson: true)
 class TrivialNestedNonNullable {
   TrivialNestedNonNullable child;
   int otherField;
@@ -389,14 +395,15 @@ FieldWithFromJsonCtorAndTypeParams _$FieldWithFromJsonCtorAndTypeParamsFromJson(
     ..customOrders = json['customOrders'] == null
         ? null
         : MyList.fromJson((json['customOrders'] as List)
-            ?.map((e) =>
-                e == null ? null : Order.fromJson(e as Map<String, dynamic>))
+            ?.map((e) => e == null
+                ? null
+                : GeneralTestClass2.fromJson(e as Map<String, dynamic>))
             ?.toList());
 }
 ''')
 @JsonSerializable(createToJson: false)
 class FieldWithFromJsonCtorAndTypeParams {
-  MyList<Order, int> customOrders;
+  MyList<GeneralTestClass2, int> customOrders;
 }
 
 class MyList<T, Q> extends ListBase<T> {

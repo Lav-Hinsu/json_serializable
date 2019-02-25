@@ -24,7 +24,9 @@ Map<String, dynamic> _$SubTypeToJson(SubType instance) {
   val['subTypeReadWrite'] = instance.subTypeReadWrite;
   return val;
 }
-''', expectedWrappedOutput: r'''
+''')
+@ShouldGenerate(
+  r'''
 SubType _$SubTypeFromJson(Map<String, dynamic> json) {
   return SubType(
       json['subTypeViaCtor'] as int, json['super-final-field'] as int)
@@ -66,7 +68,9 @@ class _$SubTypeJsonMapWrapper extends $JsonMapWrapper {
     return null;
   }
 }
-''')
+''',
+  configurations: ['wrapped'],
+)
 @JsonSerializable()
 class SubType extends SuperType {
   final int subTypeViaCtor;
