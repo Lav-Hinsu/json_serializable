@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 @TestOn('vm')
+import 'dart:async';
+
 import 'package:analyzer/dart/element/type.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:json_serializable/json_serializable.dart';
@@ -100,8 +102,8 @@ void main() async {
 
   testAnnotatedClasses(
     _libraryReader,
-    const {
-      'default': JsonSerializableGenerator(),
+    const JsonSerializableGenerator(),
+    additionalGenerators: const {
       'wrapped': JsonSerializableGenerator(
         config: JsonSerializable(useWrappers: true),
       ),
@@ -118,8 +120,9 @@ void main() async {
           const JsonSerializable(useWrappers: true).withDefaults()));
 
   group('configuration', () {
-    void runWithConfigAndLogger(JsonSerializable config, String className) {
-      generateForElement(
+    Future<Null> runWithConfigAndLogger(
+        JsonSerializable config, String className) async {
+      await generateForElement(
           JsonSerializableGenerator(
               config: config, typeHelpers: const [_ConfigLogger()]),
           _libraryReader,
@@ -137,8 +140,8 @@ void main() async {
           final testDescription =
               '$className with ${nullConfig ? 'null' : 'default'} config';
 
-          test(testDescription, () {
-            runWithConfigAndLogger(
+          test(testDescription, () async {
+            await runWithConfigAndLogger(
                 nullConfig ? null : const JsonSerializable(), className);
 
             expect(_ConfigLogger.configurations, hasLength(2));
@@ -153,8 +156,8 @@ void main() async {
 
     test(
         'values in config override unconfigured (default) values in annotation',
-        () {
-      runWithConfigAndLogger(
+        () async {
+      await runWithConfigAndLogger(
           JsonSerializable.fromJson(generatorConfigNonDefaultJson),
           'ConfigurationImplicitDefaults');
 
@@ -167,14 +170,14 @@ void main() async {
           Map<String, dynamic>.from(generatorConfigNonDefaultJson);
       configMap['create_to_json'] = true;
 
-      runWithConfigAndLogger(JsonSerializable.fromJson(configMap),
+      await runWithConfigAndLogger(JsonSerializable.fromJson(configMap),
           'ConfigurationImplicitDefaults');
     });
 
     test(
         'explicit values in annotation override corresponding settings in config',
-        () {
-      runWithConfigAndLogger(
+        () async {
+      await runWithConfigAndLogger(
           JsonSerializable.fromJson(generatorConfigNonDefaultJson),
           'ConfigurationExplicitDefaults');
 
@@ -195,13 +198,13 @@ void main() async {
   });
 }
 
-String _runForElementNamed(JsonSerializable config, String name) {
+Future<String> _runForElementNamed(JsonSerializable config, String name) async {
   final generator = JsonSerializableGenerator(config: config);
   return generateForElement(generator, _libraryReader, name);
 }
 
 void _registerTests(JsonSerializable generator) {
-  String runForElementNamed(String name) =>
+  Future<String> runForElementNamed(String name) =>
       _runForElementNamed(generator, name);
 
   void expectThrows(String elementName, messageMatcher, [todoMatcher]) {
@@ -211,8 +214,8 @@ void _registerTests(JsonSerializable generator) {
   }
 
   group('explicit toJson', () {
-    test('nullable', () {
-      final output = _runForElementNamed(
+    test('nullable', () async {
+      final output = await _runForElementNamed(
           JsonSerializable(useWrappers: generator.useWrappers),
           'TrivialNestedNullable');
 
@@ -254,8 +257,8 @@ Map<String, dynamic> _$TrivialNestedNullableToJson(
 
       expect(output, expected);
     });
-    test('non-nullable', () {
-      final output = _runForElementNamed(
+    test('non-nullable', () async {
+      final output = await _runForElementNamed(
           JsonSerializable(useWrappers: generator.useWrappers),
           'TrivialNestedNonNullable');
 
@@ -334,8 +337,8 @@ Map<String, dynamic> _$TrivialNestedNonNullableToJson(
       });
     });
 
-    test('with proper convert methods', () {
-      final output = runForElementNamed('UnknownFieldTypeWithConvert');
+    test('with proper convert methods', () async {
+      final output = await runForElementNamed('UnknownFieldTypeWithConvert');
       expect(output, contains("_everythingIs42(json['number'])"));
       if (generator.useWrappers) {
         expect(output, contains('_everythingIs42(_v.number)'));
@@ -378,8 +381,8 @@ Map<String, dynamic> _$TrivialNestedNonNullableToJson(
     });
   });
 
-  test('class with final fields', () {
-    final generateResult = runForElementNamed('FinalFields');
+  test('class with final fields', () async {
+    final generateResult = await runForElementNamed('FinalFields');
     expect(
         generateResult,
         contains(
@@ -387,14 +390,15 @@ Map<String, dynamic> _$TrivialNestedNonNullableToJson(
   });
 
   group('valid inputs', () {
-    test('class with fromJson() constructor with optional parameters', () {
-      final output = runForElementNamed('FromJsonOptionalParameters');
+    test('class with fromJson() constructor with optional parameters',
+        () async {
+      final output = await runForElementNamed('FromJsonOptionalParameters');
 
       expect(output, contains('ChildWithFromJson.fromJson'));
     });
 
-    test('class with child json-able object', () {
-      final output = runForElementNamed('ParentObject');
+    test('class with child json-able object', () async {
+      final output = await runForElementNamed('ParentObject');
 
       expect(
           output,
@@ -402,31 +406,32 @@ Map<String, dynamic> _$TrivialNestedNonNullableToJson(
               'as Map<String, dynamic>)'));
     });
 
-    test('class with child json-able object - anyMap', () {
-      final output = _runForElementNamed(
+    test('class with child json-able object - anyMap', () async {
+      final output = await _runForElementNamed(
           JsonSerializable(anyMap: true, useWrappers: generator.useWrappers),
           'ParentObject');
 
       expect(output, contains("ChildObject.fromJson(json['child'] as Map)"));
     });
 
-    test('class with child list of json-able objects', () {
-      final output = runForElementNamed('ParentObjectWithChildren');
+    test('class with child list of json-able objects', () async {
+      final output = await runForElementNamed('ParentObjectWithChildren');
 
       expect(output, contains('.toList()'));
       expect(output, contains('ChildObject.fromJson'));
     });
 
-    test('class with child list of dynamic objects is left alone', () {
-      final output = runForElementNamed('ParentObjectWithDynamicChildren');
+    test('class with child list of dynamic objects is left alone', () async {
+      final output =
+          await runForElementNamed('ParentObjectWithDynamicChildren');
 
       expect(output, contains('children = json[\'children\'] as List;'));
     });
   });
 
   group('includeIfNull', () {
-    test('some', () {
-      final output = runForElementNamed('IncludeIfNullAll');
+    test('some', () async {
+      final output = await runForElementNamed('IncludeIfNullAll');
       expect(output, isNot(contains(generatedLocalVarName)));
       expect(output, isNot(contains(toJsonMapHelperName)));
     });
