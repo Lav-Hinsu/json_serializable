@@ -4,7 +4,8 @@
 
 part of '_json_serializable_test_input.dart';
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 JsonConverterNamedCtor<E> _$JsonConverterNamedCtorFromJson<E>(
     Map<String, dynamic> json) {
   return JsonConverterNamedCtor<E>()
@@ -33,7 +34,9 @@ Map<String, dynamic> _$JsonConverterNamedCtorToJson<E>(
           ? null
           : JsonConverterNamedCtor._toJson(instance.keyAnnotationFirst)
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 @_DurationMillisecondConverter.named()
 @_GenericConverter.named()
@@ -46,10 +49,12 @@ class JsonConverterNamedCtor<E> {
   Duration keyAnnotationFirst;
 
   static Duration _fromJson(int value) => null;
+
   static int _toJson(Duration object) => 42;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 JsonConvertOnField<E> _$JsonConvertOnFieldFromJson<E>(
     Map<String, dynamic> json) {
   return JsonConvertOnField<E>()
@@ -87,7 +92,9 @@ Map<String, dynamic> _$JsonConvertOnFieldToJson<E>(
           ? null
           : _GenericConverter<E>().toJson(instance.genericValue)
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 @_durationConverter
 class JsonConvertOnField<E> {
@@ -105,6 +112,7 @@ class JsonConvertOnField<E> {
 
 class _GenericConverter<T> implements JsonConverter<T, int> {
   const _GenericConverter();
+
   const _GenericConverter.named();
 
   @override
@@ -164,6 +172,7 @@ class JsonConverterCtorParams {
 
 class _ConverterWithCtorParams implements JsonConverter<Duration, int> {
   final int param;
+
   const _ConverterWithCtorParams(this.param);
 
   @override

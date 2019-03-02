@@ -100,7 +100,7 @@ void main() async {
     '_json_serializable_test_input.dart',
   );
 
-  testAnnotatedClasses(
+  testAnnotatedElements(
     _libraryReader,
     const JsonSerializableGenerator(),
     additionalGenerators: const {

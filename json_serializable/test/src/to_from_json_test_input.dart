@@ -5,9 +5,11 @@
 part of '_json_serializable_test_input.dart';
 
 int _toInt(bool input) => 42;
+
 int _twoArgFunction(int a, int b) => 42;
 
 dynamic _toDynamic(dynamic input) => null;
+
 Object _toObject(Object input) => null;
 
 @ShouldThrow(
@@ -27,7 +29,8 @@ class InvalidFromFunc2Args {
   String field;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 ValidToFromFuncClassStatic _$ValidToFromFuncClassStaticFromJson(
     Map<String, dynamic> json) {
   return ValidToFromFuncClassStatic()
@@ -43,7 +46,9 @@ Map<String, dynamic> _$ValidToFromFuncClassStaticToJson(
           ? null
           : ValidToFromFuncClassStatic._staticFunc(instance.field)
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class ValidToFromFuncClassStatic {
   static String _staticFunc(String param) => null;
@@ -68,14 +73,21 @@ class InvalidToFunc2Args {
   String field;
 }
 
-@ShouldGenerate("_toObject(json['field'])", contains: true)
+@ShouldGenerate(
+  "_toObject(json['field'])",
+  contains: true,
+)
 @JsonSerializable()
 class ObjectConvertMethods {
   @JsonKey(fromJson: _toObject, toJson: _toObject)
   String field;
 }
 
-@ShouldGenerate("_toDynamic(json['field'])", contains: true)
+@ShouldGenerate(
+  "_toDynamic(json['field'])",
+  contains: true,
+  configurations: ['default'],
+)
 @JsonSerializable()
 class DynamicConvertMethods {
   @JsonKey(fromJson: _toDynamic, toJson: _toDynamic)
@@ -84,7 +96,11 @@ class DynamicConvertMethods {
 
 String _toString(String input) => null;
 
-@ShouldGenerate("_toString(json['field'] as String)", contains: true)
+@ShouldGenerate(
+  "_toString(json['field'] as String)",
+  contains: true,
+  configurations: ['default'],
+)
 @JsonSerializable()
 class TypedConvertMethods {
   @JsonKey(fromJson: _toString, toJson: _toString)
@@ -92,10 +108,13 @@ class TypedConvertMethods {
 }
 
 String _fromDynamicMap(Map input) => null;
+
 String _fromDynamicList(List input) => null;
+
 String _fromDynamicIterable(Iterable input) => null;
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 FromDynamicCollection _$FromDynamicCollectionFromJson(
     Map<String, dynamic> json) {
   return FromDynamicCollection()
@@ -109,7 +128,9 @@ FromDynamicCollection _$FromDynamicCollectionFromJson(
         ? null
         : _fromDynamicIterable(json['iterableField'] as List);
 }
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable(createToJson: false)
 class FromDynamicCollection {
   @JsonKey(fromJson: _fromDynamicMap)

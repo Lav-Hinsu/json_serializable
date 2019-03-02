@@ -30,7 +30,8 @@ const theAnswer = 42;
 @JsonSerializable()
 void annotatedMethod() => null;
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 GeneralTestClass1 _$GeneralTestClass1FromJson(Map<String, dynamic> json) {
   return GeneralTestClass1()
     ..firstName = json['firstName'] as String
@@ -54,7 +55,9 @@ Map<String, dynamic> _$GeneralTestClass1ToJson(GeneralTestClass1 instance) =>
       'varType': instance.varType,
       'listOfInts': instance.listOfInts
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class GeneralTestClass1 {
   String firstName, lastName;
@@ -68,7 +71,8 @@ class GeneralTestClass1 {
   List<int> listOfInts;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 GeneralTestClass2 _$GeneralTestClass2FromJson(Map<String, dynamic> json) {
   return GeneralTestClass2(json['height'] as int, json['firstName'] as String,
       json['lastName'] as String)
@@ -84,7 +88,9 @@ Map<String, dynamic> _$GeneralTestClass2ToJson(GeneralTestClass2 instance) =>
       'height': instance.height,
       'dateOfBirth': instance.dateOfBirth?.toIso8601String()
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class GeneralTestClass2 {
   final String firstName, lastName;
@@ -95,14 +101,17 @@ class GeneralTestClass2 {
       : firstName = firstName;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 FinalFields _$FinalFieldsFromJson(Map<String, dynamic> json) {
   return FinalFields(json['a'] as int);
 }
 
 Map<String, dynamic> _$FinalFieldsToJson(FinalFields instance) =>
     <String, dynamic>{'a': instance.a};
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class FinalFields {
   final int a;
@@ -112,7 +121,8 @@ class FinalFields {
   FinalFields(this.a);
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 FinalFieldsNotSetInCtor _$FinalFieldsNotSetInCtorFromJson(
     Map<String, dynamic> json) {
   return FinalFieldsNotSetInCtor();
@@ -121,7 +131,9 @@ FinalFieldsNotSetInCtor _$FinalFieldsNotSetInCtorFromJson(
 Map<String, dynamic> _$FinalFieldsNotSetInCtorToJson(
         FinalFieldsNotSetInCtor instance) =>
     <String, dynamic>{};
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class FinalFieldsNotSetInCtor {
   final int a = 1;
@@ -129,14 +141,17 @@ class FinalFieldsNotSetInCtor {
   FinalFieldsNotSetInCtor();
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 SetSupport _$SetSupportFromJson(Map<String, dynamic> json) {
   return SetSupport((json['values'] as List)?.map((e) => e as int)?.toSet());
 }
 
 Map<String, dynamic> _$SetSupportToJson(SetSupport instance) =>
     <String, dynamic>{'values': instance.values?.toList()};
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable()
 class SetSupport {
   final Set<int> values;
@@ -238,7 +253,8 @@ class IncludeIfNullAll {
   String str;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 Map<String, dynamic> _$IncludeIfNullOverrideToJson(
     IncludeIfNullOverride instance) {
   final val = <String, dynamic>{
@@ -254,7 +270,9 @@ Map<String, dynamic> _$IncludeIfNullOverrideToJson(
   writeNotNull('str', instance.str);
   return val;
 }
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable(createFactory: false, includeIfNull: false)
 class IncludeIfNullOverride {
   @JsonKey(includeIfNull: true)
@@ -291,13 +309,16 @@ class DupeKeys {
   String str;
 }
 
-@ShouldGenerate(r'''
+@ShouldGenerate(
+  r'''
 Map<String, dynamic> _$IgnoredFieldClassToJson(IgnoredFieldClass instance) =>
     <String, dynamic>{
       'ignoredFalseField': instance.ignoredFalseField,
       'ignoredNullField': instance.ignoredNullField
     };
-''')
+''',
+  configurations: ['default'],
+)
 @JsonSerializable(createFactory: false)
 class IgnoredFieldClass {
   @JsonKey(ignore: true)
