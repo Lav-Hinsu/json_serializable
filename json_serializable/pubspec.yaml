@@ -31,6 +31,10 @@ dev_dependencies:
   yaml: ^2.1.13
 
 dependency_overrides:
+#  source_gen:
+#    path: ../../source_gen/source_gen
+#  source_gen_test:
+#    path: ../../source_gen/source_gen_test
   source_gen:
     git:
       url: https://github.com/dart-lang/source_gen

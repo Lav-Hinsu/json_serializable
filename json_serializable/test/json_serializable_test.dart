@@ -209,8 +209,13 @@ void _registerTests(JsonSerializable generator) {
 
   void expectThrows(String elementName, messageMatcher, [todoMatcher]) {
     todoMatcher ??= isEmpty;
-    expect(() => runForElementNamed(elementName),
-        throwsInvalidGenerationSourceError(messageMatcher, todoMatcher));
+    expect(
+      () => runForElementNamed(elementName),
+      throwsInvalidGenerationSourceError(
+        messageMatcher,
+        todoMatcher: todoMatcher,
+      ),
+    );
   }
 
   group('explicit toJson', () {

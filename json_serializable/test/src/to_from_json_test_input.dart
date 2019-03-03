@@ -13,16 +13,21 @@ dynamic _toDynamic(dynamic input) => null;
 Object _toObject(Object input) => null;
 
 @ShouldThrow(
-    'Error with `@JsonKey` on `field`. The `fromJson` function `_toInt` '
-    'return type `int` is not compatible with field type `String`.')
+  'Error with `@JsonKey` on `field`. The `fromJson` function `_toInt` '
+      'return type `int` is not compatible with field type `String`.',
+  element: 'field',
+)
 @JsonSerializable()
 class BadFromFuncReturnType {
   @JsonKey(fromJson: _toInt)
   String field;
 }
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `fromJson` function '
-    '`_twoArgFunction` must have one positional paramater.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `fromJson` function '
+      '`_twoArgFunction` must have one positional paramater.',
+  element: 'field',
+)
 @JsonSerializable()
 class InvalidFromFunc2Args {
   @JsonKey(fromJson: _twoArgFunction)
@@ -57,16 +62,22 @@ class ValidToFromFuncClassStatic {
   String field;
 }
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `toJson` function `_toInt` '
-    'argument type `bool` is not compatible with field type `String`.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `toJson` function `_toInt` '
+      'argument type `bool` is not compatible with field type `String`.',
+  element: 'field',
+)
 @JsonSerializable()
 class BadToFuncReturnType {
   @JsonKey(toJson: _toInt)
   String field;
 }
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `toJson` function '
-    '`_twoArgFunction` must have one positional paramater.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `toJson` function '
+      '`_twoArgFunction` must have one positional paramater.',
+  element: 'field',
+)
 @JsonSerializable()
 class InvalidToFunc2Args {
   @JsonKey(toJson: _twoArgFunction)
@@ -143,8 +154,11 @@ class FromDynamicCollection {
 
 String _noArgs() => null;
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `fromJson` function '
-    '`_noArgs` must have one positional paramater.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `fromJson` function '
+      '`_noArgs` must have one positional paramater.',
+  element: 'field',
+)
 @JsonSerializable(createToJson: false)
 class BadNoArgs {
   @JsonKey(fromJson: _noArgs)
@@ -153,8 +167,11 @@ class BadNoArgs {
 
 String _twoArgs(a, b) => null;
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `fromJson` function '
-    '`_twoArgs` must have one positional paramater.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `fromJson` function '
+      '`_twoArgs` must have one positional paramater.',
+  element: 'field',
+)
 @JsonSerializable(createToJson: false)
 class BadTwoRequiredPositional {
   @JsonKey(fromJson: _twoArgs)
@@ -163,8 +180,11 @@ class BadTwoRequiredPositional {
 
 String _oneNamed({a}) => null;
 
-@ShouldThrow('Error with `@JsonKey` on `field`. The `fromJson` function '
-    '`_oneNamed` must have one positional paramater.')
+@ShouldThrow(
+  'Error with `@JsonKey` on `field`. The `fromJson` function '
+      '`_oneNamed` must have one positional paramater.',
+  element: 'field',
+)
 @JsonSerializable(createToJson: false)
 class BadOneNamed {
   @JsonKey(fromJson: _oneNamed)
